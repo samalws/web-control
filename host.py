@@ -1,4 +1,4 @@
-// TODO security
+# TODO security
 
 import socket
 import subprocess
@@ -10,7 +10,7 @@ s.bind(("", 880))
 s.listen()
 
 def processReceived(st):
-    st = urllib.parse.unquote(st)
+    st = urllib.parse.unquote(st).replace("BACKSLASH", "\\").replace("\\\\", "\\")
     url = st[5:st.find(" HTTP/")]
     slashLoc = url.find("/")
     if slashLoc == -1:
@@ -40,5 +40,5 @@ while True:
         result = urls[url[0]](url[1])
         connection.send(("HTTP/1.1 200 OK\nContent-Type: text/html\n\n" + result).encode())
     except Exception as e:
-        connection.send(str(e).encode())
+        connection.send(str("ERROR: " + e).encode())
     connection.close()

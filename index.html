@@ -6,8 +6,8 @@
 <button onclick="cmdBtn()">Run</button>
 
 <p id="wifiOtp"></p>
-<input placeholder="ssid" id="ssidInput" />
-<input type="password" placeholder="password" id="passInput" />
+<input placeholder="ssid" id="ssidInput"></input>
+<input type="password" placeholder="password" id="passInput"></input>
 <button onclick="wifiBtn()">Wifi Login</button>
 
 <script>
@@ -18,11 +18,11 @@ const request = (url, otp) => {
 	requ.send()
 }
 const otp = (id) => (str) => {
-	document.getElementById(id).innerHTML = str
+	if (id == "") return
+	document.getElementById(id + "Otp").innerHTML = str
 }
 const runCmd = (cmd, id) => {
-	console.log(id)
-	request("/cmd/" + cmd, otp(id + "Otp"))
+	request("/cmd/" + cmd, otp(id))
 }
 const statusCmd = "date;echo '<br>';echo 95%"
 const statusBtn = () => runCmd(statusCmd, "status")
@@ -30,16 +30,17 @@ const getInput = (id) => document.getElementById(id + "Input").value
 const cmdBtn = () => runCmd(getInput("cmd"), "cmd")
 const wifiCmd = () => {
 	var cmd = "echo -e '"
-	cmd += "network{\\n"
-	cmd += "ssid:\""
+	const newline = "BACKSLASHn"
+	cmd += "network={" + newline
+	cmd += "ssid=\""
 	cmd += getInput("ssid")
-	cmd += "\"\\n"
-	cmd += "password:\""
+	cmd += "\"" + newline
+	cmd += "password=\""
 	cmd += getInput("pass")
-	cmd += "\"\\n}'"
-	cmd += " | sudo tee /etc/wpa_supplicant; "
+	cmd += "\"BACKSLASHn}'"
+	cmd += " | sudo tee /etc/wpa_supplicant.conf; "
 	cmd += "sudo systemctl restart wpa_supplicant"
 	return cmd
 }
-const wifiBtn = () => runCmd(wifiCmd(), "wifi")
+const wifiBtn = () => runCmd(wifiCmd(), "")
 </script>
