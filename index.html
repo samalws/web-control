@@ -24,8 +24,15 @@ const otp = (id) => (str) => {
 const runCmd = (cmd, id) => {
 	request("/cmd/" + cmd, otp(id))
 }
-const statusCmd = "date;echo '<br>';upower -d | grep percentage: | sed 's/percentage://' | sed '2,$d'"
-const statusBtn = () => runCmd(statusCmd, "status")
+const statusCmd = () => {
+	var cmd = "date; "
+	cmd += "echo '<br>'; "
+	cmd += "upower -d | grep percentage: | sed 's/percentage://' | sed '2,$d'; "
+	cmd += "echo '<br>'; "
+	cmd += "ip link | sed -n '/^[[:digit:]]/p' | sed 's/^[[:digit:]]*: //' | sed 's/:.*//' | sed 's/.*/sudo wpa_cli -i & status/' | sh 2>&1 | grep wpa_state | sed 's/wpa_state=/wifi: /'"
+	return cmd
+}
+const statusBtn = () => runCmd(statusCmd(), "status")
 const getInput = (id) => document.getElementById(id + "Input").value
 const cmdBtn = () => runCmd(getInput("cmd"), "cmd")
 const wifiCmd = () => {
@@ -34,6 +41,7 @@ const wifiCmd = () => {
 	cmd += "\' \'"
 	cmd += getInput("pass")
 	cmd += "\' | sudo tee /etc/wpa_supplicant.conf; "
+	cmd += "echo 'ctrl_interface=/run/wpa_supplicant' | sudo tee -a /etc/wpa_supplicant.conf; "
 	cmd += "sudo systemctl restart wpa_supplicant"
 	return cmd
 }

@@ -40,5 +40,5 @@ while True:
         result = urls[url[0]](url[1])
         connection.send(("HTTP/1.1 200 OK\nContent-Type: text/html\n\n" + result).encode())
     except Exception as e:
-        connection.send(str("ERROR: " + e).encode())
+        connection.send(str(e).encode())
     connection.close()
