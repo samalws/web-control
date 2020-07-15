@@ -24,21 +24,16 @@ const otp = (id) => (str) => {
 const runCmd = (cmd, id) => {
 	request("/cmd/" + cmd, otp(id))
 }
-const statusCmd = "date;echo '<br>';echo 95%"
+const statusCmd = "date;echo '<br>';upower -d | grep percentage: | sed 's/percentage://' | sed '2,$d'"
 const statusBtn = () => runCmd(statusCmd, "status")
 const getInput = (id) => document.getElementById(id + "Input").value
 const cmdBtn = () => runCmd(getInput("cmd"), "cmd")
 const wifiCmd = () => {
-	var cmd = "echo -e '"
-	const newline = "BACKSLASHn"
-	cmd += "network={" + newline
-	cmd += "ssid=\""
+	var cmd = "wpa_passphrase \'"
 	cmd += getInput("ssid")
-	cmd += "\"" + newline
-	cmd += "password=\""
+	cmd += "\' \'"
 	cmd += getInput("pass")
-	cmd += "\"BACKSLASHn}'"
-	cmd += " | sudo tee /etc/wpa_supplicant.conf; "
+	cmd += "\' | sudo tee /etc/wpa_supplicant.conf; "
 	cmd += "sudo systemctl restart wpa_supplicant"
 	return cmd
 }
