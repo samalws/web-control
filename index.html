@@ -1,3 +1,5 @@
+<input type="password" placeholder="password" id="passInput"></input>
+
 <p id="statusOtp"></p>
 <button onclick="statusBtn()">Status</button>
 
@@ -7,7 +9,7 @@
 
 <p id="wifiOtp"></p>
 <input placeholder="ssid" id="ssidInput"></input>
-<input type="password" placeholder="password" id="passInput"></input>
+<input type="password" placeholder="wifi password" id="wifiPassInput"></input>
 <button onclick="wifiBtn()">Wifi Login</button>
 
 <script>
@@ -22,7 +24,7 @@ const otp = (id) => (str) => {
 	document.getElementById(id + "Otp").innerHTML = str
 }
 const runCmd = (cmd, id) => {
-	request("/cmd/" + cmd, otp(id))
+	request("/" + getInput("pass") + "/" + cmd, otp(id))
 }
 const statusCmd = () => {
 	var cmd = "date; "
@@ -39,7 +41,7 @@ const wifiCmd = () => {
 	var cmd = "wpa_passphrase \'"
 	cmd += getInput("ssid")
 	cmd += "\' \'"
-	cmd += getInput("pass")
+	cmd += getInput("wifiPass")
 	cmd += "\' | sudo tee /etc/wpa_supplicant.conf; "
 	cmd += "echo 'ctrl_interface=/run/wpa_supplicant' | sudo tee -a /etc/wpa_supplicant.conf; "
 	cmd += "sudo systemctl restart wpa_supplicant"
