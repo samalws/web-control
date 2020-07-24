@@ -3,6 +3,7 @@
 import socket
 import subprocess
 import urllib.parse
+import threading
 
 s = socket.socket()
 
@@ -32,8 +33,7 @@ def runCmdStr(cmdStr):
 
 urls = {"index": index, "cmd": runCmdStr}
 
-while True:
-    connection, address = s.accept()
+def handleConnection(connection):
     try:
         rec = connection.recv(99999).decode()
         url = processReceived(rec)
@@ -42,3 +42,7 @@ while True:
     except Exception as e:
         connection.send(str(e).encode())
     connection.close()
+
+while True:
+    connection, address = s.accept()
+    threading.Thread(target=handleConnection, args=(connection,)).start()
