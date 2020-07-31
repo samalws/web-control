@@ -12,6 +12,10 @@
 <input type="password" placeholder="wifi password" id="wifiPassInput"></input>
 <button onclick="wifiBtn()">Wifi Login</button>
 
+<p id="brightnessOtp"></p>
+<input type="number" id="brightnessInput"></input>
+<button onclick="brightnessBtn()">Set Brightness</button>
+
 <script>
 const request = (url, otp) => {
 	requ = new XMLHttpRequest()
@@ -32,6 +36,8 @@ const statusCmd = () => {
 	cmd += "upower -d | grep percentage: | sed 's/percentage://' | sed '2,$d'; "
 	cmd += "echo '<br>'; "
 	cmd += "ip link | sed -n '/^[[:digit:]]/p' | sed 's/^[[:digit:]]*: //' | sed 's/:.*//' | sed 's/.*/sudo wpa_cli -i & status/' | sh 2>&1 | grep wpa_state | sed 's/wpa_state=/wifi: /'"
+	cmd += "echo -n 'brightness: ';"
+	cmd += "cat /sys/class/backlight/*/brightness"
 	return cmd
 }
 const statusBtn = () => runCmd(statusCmd(), "status")
@@ -48,4 +54,5 @@ const wifiCmd = () => {
 	return cmd
 }
 const wifiBtn = () => runCmd(wifiCmd(), "")
+const brightnessBtn = () => runCmd("echo " + getInput("brightness") + " > /sys/class/backlight/*/brightness", "")
 </script>
