@@ -35,9 +35,10 @@ const statusCmd = () => {
 	cmd += "echo '<br>'; "
 	cmd += "upower -d | grep percentage: | sed 's/percentage://' | sed '2,$d'; "
 	cmd += "echo '<br>'; "
+	cmd += "echo 'brightness:'; "
+	cmd += "cat /sys/class/backlight/*/brightness; "
+	cmd += "echo '<br>'; "
 	cmd += "ip link | sed -n '/^[[:digit:]]/p' | sed 's/^[[:digit:]]*: //' | sed 's/:.*//' | sed 's/.*/sudo wpa_cli -i & status/' | sh 2>&1 | grep wpa_state | sed 's/wpa_state=/wifi: /'"
-	cmd += "echo -n 'brightness: ';"
-	cmd += "cat /sys/class/backlight/*/brightness"
 	return cmd
 }
 const statusBtn = () => runCmd(statusCmd(), "status")
@@ -54,5 +55,5 @@ const wifiCmd = () => {
 	return cmd
 }
 const wifiBtn = () => runCmd(wifiCmd(), "")
-const brightnessBtn = () => runCmd("echo " + getInput("brightness") + " > /sys/class/backlight/*/brightness", "")
+const brightnessBtn = () => runCmd("echo " + getInput("brightness") + " | tee /sys/class/backlight/*/brightness", "")
 </script>
